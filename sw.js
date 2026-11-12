@@ -1,5 +1,5 @@
 // Offline-Speicher der Kopfrechnen-App. Version ändert sich bei jedem Build -> Geräte holen die neue Fassung.
-const CACHE = 'kopfrechnen-20261112-174541';
+const CACHE = 'kopfrechnen-20261112-175612';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

@@ -1062,6 +1062,8 @@ function runSerie(cfg){
     <div class="topbar"><a class="pill" href="${cfg.back}" id="abort">✕ Abbrechen</a><div class="prog"><div class="track"><div class="fill" id="pf"></div></div><div class="lbl" id="pl"></div></div><div class="timer" id="tm" aria-live="off">0:00</div></div>
     <div class="panel top" id="card"></div></div></div></main>`;
   const card=document.getElementById('card'),tm=document.getElementById('tm');
+  // Die Serie läuft unter derselben Adresse wie die Auswahl (#serie / #pruefung): ein Link allein löst keinen Seitenwechsel aus.
+  document.getElementById('abort').onclick=e=>{e.preventDefault();if(location.hash!==cfg.back)location.hash=cfg.back;else{route();window.scrollTo(0,0);}};
   const iv=setInterval(()=>{if(!tEnd)tm.textContent=tfmt((performance.now()-t0)/1000);},250);
   cleanup=()=>clearInterval(iv);
   const keyH=e=>{if(mode==='papier'&&(e.key===' '||e.key==='Enter'||e.key==='ArrowRight')&&!tEnd&&e.target.tagName!=='BUTTON'){e.preventDefault();nextQ();}};

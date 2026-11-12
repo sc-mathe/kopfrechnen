@@ -156,6 +156,8 @@ main{padding-block:26px 40px}
 .steps{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;font-variant-numeric:tabular-nums}
 .steps li{padding-left:18px;position:relative}
 .steps li::before{content:"›";position:absolute;left:4px;color:var(--green);font-weight:800}
+.steps.plain li{padding-left:0}
+.steps.plain li::before{content:none}
 .hint{font-size:.85rem;color:var(--muted);text-align:center;margin-top:12px}
 
 /* Trick box */
@@ -244,9 +246,12 @@ footer .wrap{padding-block:18px 28px}
 }
 @media (max-width:480px){
   .logo span{display:none}
-  .bar .wrap{gap:8px}
-  .nav{gap:5px}
-  .nav a{padding:5px 8px;font-size:.8rem}
+  .logo{margin-right:0}
+  .logo img{width:26px}
+  .bar .wrap{gap:8px;flex-wrap:nowrap}
+  .nav{gap:5px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;min-width:0;padding:3px 2px}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{padding:5px 8px;font-size:.8rem;white-space:nowrap;flex:none}
   .key{min-width:40px;padding:6px 8px}
 }
 @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
@@ -1114,7 +1119,7 @@ function viewHandy(){
   let standalone=false;try{standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;}catch(e){}
   const ua=navigator.userAgent||'';const ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document);const android=/Android/.test(ua);
   const step=(n,t)=>`<li><span class="chip" style="margin-right:8px">${n}</span>${t}</li>`;
-  const box=(title,steps,mine)=>`<div class="mt" style="${mine?'box-shadow:0 0 0 3px var(--green),0 4px 0 var(--green)':''}"><h3>${title}${mine?' <span class="chip ghost" style="vertical-align:middle">dein Gerät</span>':''}</h3><ol class="steps" style="gap:10px">${steps.join('')}</ol></div>`;
+  const box=(title,steps,mine)=>`<div class="mt" style="${mine?'box-shadow:0 0 0 3px var(--green),0 4px 0 var(--green)':''}"><h3>${title}${mine?' <span class="chip ghost" style="vertical-align:middle">dein Gerät</span>':''}</h3><ol class="steps plain" style="gap:10px">${steps.join('')}</ol></div>`;
   app.innerHTML=`<main><div class="wrap"><div class="sec-h"><h2>Die App aufs Handy holen</h2><p>Einmal einrichten, dann läuft sie wie eine normale App – auch ohne Internet.</p></div>
   ${standalone?`<div class="fb ok" style="margin-bottom:16px"><img src="${IMG_THUMBS}" alt=""><div><div class="t">Alles bereit!</div>Du benutzt die App bereits installiert. Sie funktioniert jetzt auch ohne Internet.</div></div>`:''}
   ${!onSite?`<div class="fb bad" style="margin-bottom:16px"><div><div class="t">Installieren geht nur über den Link</div>Öffne dazu <b style="user-select:all">${APP_URL}</b> im Browser deines Handys.</div></div>`:''}

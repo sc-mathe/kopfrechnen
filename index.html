@@ -264,13 +264,14 @@ footer .wrap{padding-block:18px 28px}
       <a href="#serie" class="o" data-nav="serie">Serie</a>
       <a href="#pruefung" data-nav="pruefung">Prüfung</a>
       <a href="#tabellen" class="o" data-nav="tabellen">Merktabellen</a>
+      <a href="#handy" data-nav="handy">Aufs Handy</a>
     </nav>
   </div>
 </header>
 <div id="app"></div>
 <footer><div class="wrap">
   Grundlage: Lehrmittel «Kopfrechnen im Zeitalter des Taschenrechners» und die Kopfrechen-Serien aus dem Unterricht.
-  Dein Fortschritt wird nur in diesem Browser auf diesem Gerät gespeichert.
+  Dein Fortschritt wird nur in diesem Browser auf diesem Gerät gespeichert. <a href="#handy">App aufs Handy holen</a>.
   <button class="pill" id="reset" type="button" style="margin-left:6px;font-size:.8rem;padding:4px 10px">Fortschritt zurücksetzen</button>
   <span id="resetq" hidden> Wirklich alles löschen? <button class="pill" id="resetyes" type="button" style="font-size:.8rem;padding:4px 10px">Ja, löschen</button></span>
 </div></footer>
@@ -884,6 +885,7 @@ function route(){
   if(h==='serie'){setNav('serie');return viewSerieSetup();}
   if(h==='pruefung'){setNav('pruefung');return viewPruefung();}
   if(h==='tabellen'){setNav('tabellen');return viewTabellen();}
+  if(h==='handy'){setNav('handy');return viewHandy();}
   setNav('start');viewHome();
 }
 window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0);});
@@ -1101,6 +1103,36 @@ function runSerie(cfg){
     render();
   }
   show();
+}
+
+/* --- App aufs Handy installieren --- */
+const APP_URL='https://sc-mathe.github.io/kopfrechnen/';
+let installPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;const b=document.getElementById('instbtn');if(b)b.hidden=false;});
+function viewHandy(){
+  const onSite=location.hostname==='sc-mathe.github.io';
+  let standalone=false;try{standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;}catch(e){}
+  const ua=navigator.userAgent||'';const ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document);const android=/Android/.test(ua);
+  const step=(n,t)=>`<li><span class="chip" style="margin-right:8px">${n}</span>${t}</li>`;
+  const box=(title,steps,mine)=>`<div class="mt" style="${mine?'box-shadow:0 0 0 3px var(--green),0 4px 0 var(--green)':''}"><h3>${title}${mine?' <span class="chip ghost" style="vertical-align:middle">dein Gerät</span>':''}</h3><ol class="steps" style="gap:10px">${steps.join('')}</ol></div>`;
+  app.innerHTML=`<main><div class="wrap"><div class="sec-h"><h2>Die App aufs Handy holen</h2><p>Einmal einrichten, dann läuft sie wie eine normale App – auch ohne Internet.</p></div>
+  ${standalone?`<div class="fb ok" style="margin-bottom:16px"><img src="${IMG_THUMBS}" alt=""><div><div class="t">Alles bereit!</div>Du benutzt die App bereits installiert. Sie funktioniert jetzt auch ohne Internet.</div></div>`:''}
+  ${!onSite?`<div class="fb bad" style="margin-bottom:16px"><div><div class="t">Installieren geht nur über den Link</div>Öffne dazu <b style="user-select:all">${APP_URL}</b> im Browser deines Handys.</div></div>`:''}
+  <div class="row" style="margin-bottom:16px"><button class="btn" type="button" id="instbtn" hidden>App jetzt installieren</button></div>
+  <div class="mt-grid">
+  ${box('iPhone und iPad',[step(1,`Öffne <b>${APP_URL}</b> in <b>Safari</b>.`),step(2,'Tippe unten auf das <b>Teilen-Symbol</b> (Quadrat mit Pfeil nach oben).'),step(3,'Scrolle nach unten und tippe auf <b>«Zum Home-Bildschirm»</b>.'),step(4,'Tippe oben rechts auf <b>«Hinzufügen»</b>. Jetzt ist der Frosch auf deinem Home-Bildschirm.')],ios)}
+  ${box('Android',[step(1,`Öffne <b>${APP_URL}</b> in <b>Chrome</b>.`),step(2,'Tippe oben rechts auf die <b>drei Punkte ⋮</b>.'),step(3,'Tippe auf <b>«App installieren»</b> oder <b>«Zum Startbildschirm hinzufügen»</b>.'),step(4,'Bestätige mit <b>«Installieren»</b>. Jetzt ist der Frosch bei deinen Apps.')],android)}
+  ${box('Laptop',[step(1,`Öffne <b>${APP_URL}</b> in Chrome, Edge oder Safari.`),step(2,'Chrome/Edge: Klicke rechts in der Adresszeile auf das Symbol <b>«App installieren»</b>. Sonst: Seite als Lesezeichen speichern.'),step(3,'Einmal mit Internet öffnen – danach klappt es auch offline.')],!ios&&!android)}
+  </div>
+  <div class="mt" style="margin-top:16px"><h3>Wichtig zu wissen</h3><ul class="steps" style="gap:8px">
+    <li><b>Offline testen:</b> Öffne die App nach dem Installieren einmal mit Internet. Schalte danach den Flugmodus ein und starte sie nochmals – sie sollte normal laufen.</li>
+    <li><b>Dein Fortschritt</b> (Sterne, Bestzeiten) wird nur auf diesem Gerät gespeichert. Handy und Laptop haben je ihren eigenen Fortschritt. Niemand sonst sieht ihn.</li>
+    <li>Der Fortschritt geht verloren, wenn du die App löschst, die Browserdaten löschst oder im privaten Modus übst.</li>
+    <li><b>iPhone:</b> Übe in der installierten App (Frosch-Icon), nicht im Safari-Tab. Safari kann gespeicherte Daten von Webseiten nach einigen Wochen ohne Besuch löschen.</li>
+    <li><b>Neue Version:</b> Wenn deine Lehrperson etwas ergänzt, holt sich die App die neue Version beim nächsten Start mit Internet. Dein Fortschritt bleibt erhalten.</li>
+  </ul></div></div></main>`;
+  const b=document.getElementById('instbtn');if(installPrompt)b.hidden=false;
+  b.onclick=async()=>{if(!installPrompt)return;installPrompt.prompt();try{await installPrompt.userChoice;}catch(e){}installPrompt=null;b.hidden=true;};
 }
 
 /* --- Merktabellen --- */
